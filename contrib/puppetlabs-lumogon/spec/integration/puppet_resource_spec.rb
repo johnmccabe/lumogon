@@ -3,8 +3,12 @@ require 'spec_helper'
 describe "puppetlabs-lumogon integration" do
   before(:all) do
     `docker run -it --privileged --name dind-test -d docker:dind`
+    `docker save puppet/lumogon:latest > latestimg.tar`
+    `docker run -it --rm --link dind-test:docker docker load < /tmp/latestimg.tar`
     `docker run -it --rm --link dind-test:docker docker run -d ubuntu /bin/sh -c "while true; do echo hello world; sleep 1; done"`
   end
+
+  # `docker cp latestimg.tar dind-test:/tmp`  
 
   after(:all) do
     `docker kill dind-test | xargs docker rm`
